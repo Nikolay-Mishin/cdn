@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+
+	<title>CDN App</title>
+
+    <!-- materialize css -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet" />
+    <!-- material icons -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+
+    <script src="libs/html2canvas.min.js"></script>
+</head>
+
+<body>
+    <!-- основной контейнер -->
+    <div class="row main">
+        <h3>Create JSON</h3>
+        <form class="col s12">
+            <!-- первая пара "ключ-значение" -->
+            <div class="row">
+                <div class="input-field col s5">
+                    <label>key</label>
+                    <input type="text" value="1" required>
+                </div>
+                <div class="input-field col s2">
+                    <p>:</p>
+                </div>
+                <div class="input-field col s5">
+                    <label>value</label>
+                    <input type="text" value="foo" required>
+                </div>
+            </div>
+
+            <!-- вторая пара -->
+            <div class="row">
+                <div class="input-field col s5">
+                    <label>key</label>
+                    <input type="text" value="2" required>
+                </div>
+                <div class="input-field col s2">
+                    <p>:</p>
+                </div>
+                <div class="input-field col s5">
+                    <label>value</label>
+                    <input type="text" value="bar" required>
+                </div>
+            </div>
+
+            <!-- третья пара -->
+            <div class="row">
+                <div class="input-field col s5">
+                    <label>key</label>
+                    <input type="text" value="3" required>
+                </div>
+                <div class="input-field col s2">
+                    <p>:</p>
+                </div>
+                <div class="input-field col s5">
+                    <label>value</label>
+                    <input type="text" value="baz" required>
+                </div>
+            </div>
+
+            <!-- кнопки -->
+            <div class="row">
+                <button class="btn waves-effect waves-light create-json">
+                    create json
+                    <i class="material-icons right">send</i>
+                </button>
+                <a class="waves-effect waves-light btn get-data"><i class="material-icons right">cloud</i>get data</a>
+                <a class="waves-effect waves-light btn set-data"><i class="material-icons right">cloud</i>set data</a>
+            </div>
+        </form>
+    </div>
+
+    <div id="screenshot">
+        <div id="content">Контент</div>
+        <button id="get_images">get images</button>
+        <div id="result"></div>
+        <div id="screen"></div>
+    </div>
+	<br/>
+
+	<div id="observeDemo">
+        <button>Add Item</button>
+        <ol>
+            <li><button>list item (click to delete)</button></li>
+            <li><button>list item (click to delete)</button></li>
+            <li><button>list item (click to delete)</button></li>
+            <li><button>list item (click to delete)</button></li>
+            <li><em>&hellip;More will be added after 3 seconds&hellip;</em></li>
+        </ol>
+    </div>
+
+    <div id="historyContent"></div>
+    <div id="historyChange"></div>
+
+    <div id="testParser"></div>
+    <div id="testParser2"></div>
+
+    <script type="module" src="js/script.js"></script>
+</body>
+</html>

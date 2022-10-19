@@ -1,0 +1,67 @@
+{
+	"host": "https://cdn-4xd.pages.dev",
+	"path": {
+		"server": {
+			"root": "https://cdn",
+			"upload": "upload",
+			"saveFile": "server.php"
+		},
+		"data": {
+			"root": "data",
+			"test": "test.json",
+			"data": "data.json",
+			"cases": "cases.json",
+			"api": {
+				"qaraTMS": {
+					"root": "qaraTMS",
+					"repos": {
+						"mn": "mishin_nikolay.json",
+						"bv": "berezovsky_viktor.json",
+						"km": "kot_maria.json",
+						"sy": "sazonova_yuliya.json",
+						"sa": "sharovatov_artem.json",
+						"web": "WEB_testing_1.json"
+					}
+				}
+			}
+		}
+	},
+	"core": {
+		"click": {
+			"bubbles": true,
+			"cancelable": false
+		},
+		"observer": {
+			"childList": true,
+			"subtree": true,
+			"attributes": true,
+			"characterData": true,
+			"attributeOldValue": true,
+			"characterDataOldValue": true
+		}
+	},
+	"api": {
+		"sheets": {
+			"API_KEY": "AIzaSyD4Wdk7M3FrGro-_KlNqyd4bpTys5JGaPI",
+			"CLIENT_ID": "623773884298-l8r0dqn7tluv5gi6g86joto7t01s7q2v.apps.googleusercontent.com",
+			"DISCOVERY_DOC": "https://sheets.googleapis.com/$discovery/rest?version=v4",
+			"SCOPES": "https://www.googleapis.com/auth/spreadsheets",
+			"example": true,
+			"spreadsheetId": "1t1lTJAwl0HtuEPcTYStujDFMyXoC2mxTQm3NAe9Bcsc",
+			"range": "'Тест-кейс'!A1:F28",
+			"maxCases": "999"
+		}
+	},
+	"modules": {
+		"@root": "/",
+		"ajax": "modules/ajax.js",
+		"api": {
+			"qastart": {
+				"api": "api.js"
+			},
+			"sheets": {
+				"case": "modules/case.js"
+			}
+		}
+	}
+}

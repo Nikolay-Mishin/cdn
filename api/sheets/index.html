@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sheets API Quickstart</title>
+	<meta charset="utf-8" />
+</head>
+
+<body>
+	<a href="https://developers.google.com/sheets/api/quickstart/js" target="_blank">Sheets API Quickstart</a><br><br>
+	<a href="https://developers.google.com/sheets/api/guides/values" target="_blank">
+		Guide: Reading & Writing Cell Values
+	</a><br>
+	<a href="https://developers.google.com/sheets/api/guides/batchupdate" target="_blank">
+		Guide: Updating Spreadsheets
+	</a><br><br>
+	<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get" target="_blank">
+		Method: spreadsheets.values.get
+	</a><br>
+	<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/batchGet" target="_blank">
+		Method: spreadsheets.values.batchGet
+	</a><br>
+	<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update" target="_blank">
+		Method: spreadsheets.values.update
+	</a><br>
+	<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/batchUpdate" target="_blank">
+		Method: spreadsheets.values.batchUpdate
+	</a><br>
+	<a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/append" target="_blank">
+		Method: spreadsheets.values.append
+	</a><br><br>
+
+	<!--Add buttons to initiate auth sequence and sign out-->
+	<div id="buttonsAPI">
+		<button id="authorize_button">Authorize</button>
+		<button id="get_button" style="visibility: hidden;">Get</button>
+		<button id="save_button" style="visibility: hidden;">Save</button>
+		<button id="update_button" style="visibility: hidden;">Update</button>
+		<button id="signout_button" style="visibility: hidden;">Sign Out</button>
+	</div>
+
+	<br><pre id="content" style="white-space: pre-wrap;"></pre>
+
+	<script defer src="https://apis.google.com/js/api.js" onload="(async () => (await import('./api.js')).gapiLoaded())()"></script>
+	<script defer src="https://accounts.google.com/gsi/client" onload="(async () => (await import('./api.js')).gisLoaded())()"></script>
+	<script defer type="module" src="script.js"></script>
+</body>
+</html>

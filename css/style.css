@@ -1,0 +1,13 @@
+body {
+	max-width: 512px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+input {
+	text-align: center;
+}
+
+.get-data {
+	margin-left: 1em;
+}

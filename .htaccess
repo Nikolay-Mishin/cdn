@@ -1,0 +1,48 @@
+# with AJAX withCredentials=false (cookies NOT sent)
+# Домен с которого идут запросы
+Header always set Access-Control-Allow-Origin "*"
+# Запросы с учётными данными
+#Header always set Access-Control-Allow-Credentials "true"
+# Разрешённые методы
+Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS"
+#Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, PUT, DELETE, PATCH"
+# заголовки которые можно отправить на удалённый сервер
+Header always set Access-Control-Allow-Headers "Origin, Content-Type, Accept, X-Request-With, X-Auth-Token"
+#Header always set Access-Control-Allow-Headers "Origin, Content-Type, Accept, X-Request-With, X-Auth-Token, X-Accept-Charset, X-Accept, Accept-Language, Accept-Charset, Content-Length"
+
+# задаем кодировку по умолчанию
+AddDefaultCharset utf-8
+
+# разрешаем перенаправление
+RewriteEngine On
+
+# Редирект на HTTPS
+#RewriteCond %{HTTPS} !On
+#RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+# даем серверу знать что мы работаем через /, а не через префикс физического пути, например /abc/def
+RewriteBase /
+
+# перенаправлем все запросы на публичную папку и записываем результат в переменную $1
+#RewriteRule (.*) public/$1
+
+#RewriteCond %{REQUEST_METHOD} OPTIONS
+#RewriteRule ^(.*)$ $1 [R=200,L]
+#RewriteRule ^(.*)$ $1 [R=200,L,E=HTTP_ORIGIN:%{HTTP:ORIGIN}]
+
+#RewriteCond %{REQUEST_METHOD} POST
+#RewriteCond %{REQUEST_METHOD} (PUT|DELETE)
+#RewriteRule .* server_2.php
+
+#RewriteCond %{REQUEST_URI} ^/ru/services/?.$
+#RewriteCond %{REQUEST_METHOD} =GET
+#RewriteRule ^(.)$ http://timeweb/ru/new$1 [R=405]
+
+# условия перенаправления !-f (файл есуществует) / !-d (папка несуществует)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# все запросы к несуществующим файлам/папкам перенаправляем на index.php
+# L - last (последнее правило - больше другие правила срабатывать не должны)
+# QSA - query string append (дополнительные get-параметры добавляются к существующим, а не отбрасываются)
+RewriteRule (.*) index.html [L,QSA]
+#RewriteRule (.*) test.php?$1 [L,QSA]
