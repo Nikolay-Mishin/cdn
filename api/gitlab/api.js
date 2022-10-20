@@ -2,7 +2,6 @@ import { createBlob } from '../../modules/blob.js'
 import { createLink } from '../../modules/link.js'
 import { B, get, getAll, getByClass } from '../../modules/dom.js'
 import { read } from '../../modules/FS.js'
-import { promiseAll } from '../../modules/promise.js'
 
 //await import('https://cdn/api/gitlab/api.js')
 
