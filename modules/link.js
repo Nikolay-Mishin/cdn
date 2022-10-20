@@ -1,7 +1,9 @@
 import { log, createEl, get } from './dom.js'
+import { createBlob } from '../../modules/blob.js'
 import { fileName } from './FS.js'
 
-export let createLink = (blob, path, linkName = 'DOWNLOAD DATA', target = 'body') => {
+export let createLink = (data, path, type = 'application/json', target = 'body', linkName = 'DOWNLOAD DATA') => {
+	const blob = createBlob(data, type)
 	const name = fileName(path)
 	console.log(name)
 	// создаем элемент "a"

@@ -1,4 +1,5 @@
-import { log, getById, observeDOM } from './dom.js'
+import { log, getById } from './dom.js'
+import { observeDOM } from '../../modules/observeDOM.js'
 
 export function observeDemo() {
 	// Выбираем целевой элемент

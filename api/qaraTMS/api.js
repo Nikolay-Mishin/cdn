@@ -1,7 +1,9 @@
 import { config } from '../../config/config.js'
 import { getData } from '../../modules/ajax.js'
 import { concat } from '../../modules/array.js'
-import { getById, click, observeDOM, getByClass, get, getAll, filterNodes } from '../../modules/dom.js'
+import { getById, getByClass, get, getAll, filterNodes } from '../../modules/dom.js'
+import { click } from '../../modules/events.js'
+import { observeDOM } from '../../modules/observeDOM.js'
 import { interval } from '../../modules/time.js'
 import { getCountCases } from './modules/getCountCases.js'
 

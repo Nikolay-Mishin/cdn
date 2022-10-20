@@ -1,4 +1,5 @@
-import { log, getById, observeDOM, filterNodes } from '../../modules/dom.js'
+import { log, getById, filterNodes } from '../../modules/dom.js'
+import { observeDOM } from '../../modules/observeDOM.js'
 import { handleAuthClick, handleSignoutClick } from './api.js'
 import { getData, getRange, setData, updateData } from './modules/data.js'
 

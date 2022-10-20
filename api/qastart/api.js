@@ -1,5 +1,6 @@
 import { config } from '../../config/config.js'
-import { getAll, get, getByClass, addEvent, click, getById, B, createEl } from '../../modules/dom.js'
+import { getAll, get, getByClass, addEvent, getById, B, createEl } from '../../modules/dom.js'
+import { click } from '../../modules/events.js'
 import { concat } from '../../modules/array.js'
 import { getData } from '../../modules/ajax.js'
 import { trimExt } from '../../modules/FS.js'
