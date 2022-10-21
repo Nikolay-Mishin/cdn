@@ -2,7 +2,6 @@ import { log } from './dom.js'
 import { headers } from './http.js'
 import { jsonParse } from './json.js'
 import { tryCatch } from './tryCatch.js'
-import { isJson } from './type.js'
 
 export const getData = async (url, _data = '', method = 'GET', toJson = true, _headers = {}, mode = null) => {
 	const file = await ajax(url, _data, method, toJson, _headers, mode)
@@ -12,6 +11,8 @@ export const getData = async (url, _data = '', method = 'GET', toJson = true, _h
 
 export const ajax = async (url, data = '', method = 'GET', toJson = true, _headers = {}, mode = null) => {
 	const { ContentType } = headers
+	let type = data === 'blob' ? data : 'text'
+	data = type === 'blob' ? '' : data
 
 	method = data ? 'POST' : method
 
@@ -19,9 +20,7 @@ export const ajax = async (url, data = '', method = 'GET', toJson = true, _heade
 
 	if (mode) init.mode = mode // no-cors — Предотвращает, чтобы метод был чем-либо иным, кроме HEAD, GET или POST
 	if (data) {
-		init.headers = {
-			'Content-Type': ContentType.json
-		}
+		init.headers['Content-Type'] = ContentType.json
 		init.body = toJson ? JSON.stringify(data) : data
 	}
 
@@ -33,7 +32,7 @@ export const ajax = async (url, data = '', method = 'GET', toJson = true, _heade
 		console.log(response)
 
 		// разбираем (парсим) ответ
-		const result = await parseResponse(response)
+		const result = await parseResponse(response, type)
 
 		console.log(result)
 		console.log(typeof result)
@@ -47,13 +46,11 @@ export const ajax = async (url, data = '', method = 'GET', toJson = true, _heade
  * Use await gatherResponse(..) in an async function to get the response body
  * @param {Response} response
  */
-export async function parseResponse(response) {
+export async function parseResponse(response, type = 'text') {
 	const { headers } = response
 	const contentType = headers.get('content-type') || '' // 'application/json'
 	console.log(contentType)
-	const parse = async (type = 'text') => await response[type]()
-	//return contentType == 'application/json' ? await parse('json') : await parse()
-	const result = await parse('text')
+	const result = await response[type]()
 	const json = jsonParse(result)
 	return json || result
 }

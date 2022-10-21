@@ -1,7 +1,8 @@
 import { createBlob } from '../../modules/blob.js'
 import { createLink } from '../../modules/link.js'
 import { B, get, getAll, getByClass } from '../../modules/dom.js'
-import { read } from '../../modules/FS.js'
+import { fileExt } from '../../modules/FS.js'
+import { getImgData } from '../../modules/img.js'
 
 //await import('https://cdn/api/gitlab/api.js')
 
@@ -55,15 +56,11 @@ export const init = async () => {
 	imgList.forEach((img) => {
 		console.log(img)
 		console.log(img.src)
-		const blob = createBlob({ url: img.src })
-		//read(blob, (base64image) => {
-		//	console.log(base64image)
-		//	//img.src = base64image
-		//	imgUrlList.push(base64image)
-		//	if (imgUrlList.length == imgList.length) {
-		//		console.log(imgList)
-		//		getLink()
-		//	}
-		//}, 'url')
+		const ext = fileExt(img.src)
+		console.log(ext)
+		const { base64image } = getImgData(img, ext)
+		img.src = base64image
+		imgUrlList.push(base64image)
+		if (imgUrlList.length == imgList.length) getLink()
 	})
 }
