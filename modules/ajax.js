@@ -51,8 +51,8 @@ export async function parseResponse(response) {
 	const { headers } = response
 	const contentType = headers.get('content-type') || '' // 'application/json'
 	console.log(contentType)
-	const parse = async (type = 'json') => await response[type]()
-	//return contentType == 'application/json' ? await parse() : await parse('text')
+	const parse = async (type = 'text') => await response[type]()
+	//return contentType == 'application/json' ? await parse('json') : await parse()
 	const result = await parse('text')
 	const json = jsonParse(result)
 	return json || result
