@@ -55,15 +55,15 @@ export const init = async () => {
 	imgList.forEach((img) => {
 		console.log(img)
 		console.log(img.src)
-		const blob = createBlob(img.src, 'image/png')
-		read(blob, (base64image) => {
-			console.log(base64image)
-			img.src = base64image
-			imgUrlList.push(base64image)
-			if (imgUrlList.length == imgList.length) {
-				console.log(imgList)
-				getLink()
-			}
-		}, 'url')
+		const blob = createBlob({ url: img.src })
+		//read(blob, (base64image) => {
+		//	console.log(base64image)
+		//	//img.src = base64image
+		//	imgUrlList.push(base64image)
+		//	if (imgUrlList.length == imgList.length) {
+		//		console.log(imgList)
+		//		getLink()
+		//	}
+		//}, 'url')
 	})
 }

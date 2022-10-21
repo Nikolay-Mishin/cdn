@@ -21,3 +21,5 @@ export let createEl = (el, target = D) => target.createElement(el)
 
 export const filterNodes = (nodes, ...filter) => concat(nodes).filter((node) => filter.includes(node.localName))
 export const withoutNodes = (nodes, ...without) => concat(nodes).filter((node) => without.includes(node.localName))
+
+export const dom = { log, table, D, html, H, B, addEvent, getAll, get, getById, getByClass, createEl, filterNodes, withoutNodes }

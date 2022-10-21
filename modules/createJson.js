@@ -1,6 +1,6 @@
 import { config } from '../config/config.js'
 import { log, getAll } from './dom.js'
-import { createBlob } from './blob.js'
+import { createLink } from './link.js'
 
 const { root, data: dataPath } = config.path.data
 
@@ -51,5 +51,5 @@ export let createJson = (ev) => {
 	*/
 
 	// создаем файл
-	createBlob(data, `${root}/${dataPath}`)
+	createLink(data, `${root}/${dataPath}`)
 }

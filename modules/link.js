@@ -2,10 +2,11 @@ import { log, createEl, get } from './dom.js'
 import { createBlob } from '../../modules/blob.js'
 import { fileName } from './FS.js'
 
-export let createLink = (data, path, type = 'application/json', target = 'body', linkName = 'DOWNLOAD DATA') => {
-	const blob = createBlob(data, type)
+export let createLink = async (data, path, type = 'json', target = 'body', linkName = 'DOWNLOAD DATA') => {
+	const blob = await createBlob({ data, type })
 	const name = fileName(path)
 	console.log(name)
+	console.log(blob)
 	// создаем элемент "a"
 	const link = createEl('a')
 	// привязываем атрибут "href" тега "a" к созданному файлу

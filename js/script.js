@@ -10,8 +10,9 @@ import { getCase } from '../api/sheets/modules/case.js'
 import { $import } from '../modules/import.js'
 import { observeDemo } from '../modules/demo.js'
 import { getCountCases } from '../api/qaraTMS/modules/getCountCases.js'
-import { trimExt } from '../modules/FS.js'
+import { fileExt, fileName, trimExt } from '../modules/FS.js'
 import { setState } from '../modules/history.js'
+import { createBlob } from '../modules/blob.js'
 
 const { root, test } = config.path.data
 const data = await ajaxGetData(`/${root}/${test}`)
@@ -62,3 +63,9 @@ const testParser2 = await ajaxGetData(saveFilePath, { url: 'https://gitlab.com/q
 setState('index.html', { id: 'historyContent' })
 setState('page.php', { id: 'historyContent' })
 setState('page2.php', { update: true, id: 'historyChange' })
+
+const url = 'https://gitlab.com/qastart/web1-group/frontend/upl…c7454c4ec01416a95abdc39f68c50/__screen__br_16'
+const ext = fileExt(url)
+createBlob({ url })
+
+console.log(ext)
