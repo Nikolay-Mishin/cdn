@@ -64,8 +64,8 @@ setState('index.html', { id: 'historyContent' })
 setState('page.php', { id: 'historyContent' })
 setState('page2.php', { update: true, id: 'historyChange' })
 
-const url = 'https://gitlab.com/qastart/web1-group/frontend/upl…c7454c4ec01416a95abdc39f68c50/__screen__br_16'
+const url = 'https://gitlab.com/qastart/web1-group/frontend/upl…c7454c4ec01416a95abdc39f68c50/__screen__br_16.jpg'
 const ext = fileExt(url)
-createBlob({ url })
+//createBlob({ url })
 
 console.log(ext)

@@ -22,8 +22,8 @@ export let createBlob = async (opts = blobOpts) => {
 		const ext = fileExt(url)
 		type = ext ? ext : type
 		console.log(type)
-		//const result = getData(url)
-		//console.log(result)
+		const result = getData(url)
+		console.log(result)
 	}
 	// сериализуем данные
 	if (type == 'json') data = JSON.stringify(data)
