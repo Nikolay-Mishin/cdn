@@ -38,7 +38,7 @@ export const init = async () => {
 				</div>
 			</body>
 		</html>`
-		createLink(html, file, 'text/html', '.detail-page-header-body')
+		createLink(html, file, 'html', '.detail-page-header-body')
 	}
 
 	console.log(title)

@@ -4,7 +4,7 @@ const regexp = new RegExp(/\.[^ /.]+$/g)
 
 export const trimExt = (path) => path.replace(regexp, '')
 
-export const fileExt = (path) => ([...path.matchAll(regexp)].shift() || [])[0] || ''
+export const fileExt = (path) => (([...path.matchAll(regexp)].shift() || [])[0] || '').replace('.', '')
 
 export const fileName = (path, ext = true) => {
 	const name = path.split('/').pop()

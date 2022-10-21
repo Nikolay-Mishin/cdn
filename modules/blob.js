@@ -1,3 +1,4 @@
+import { getData } from './ajax.js'
 import { log } from './dom.js'
 import { fileExt } from './FS.js'
 
@@ -15,14 +16,15 @@ const prefixList = {
 
 export let createBlob = async (opts = blobOpts) => {
 	opts = Object.assign(blobOpts, opts)
-	let { type, data, url, file } = opts
-	console.log({ type, data, url, file })
+	let { type, data, url } = opts
+	console.log({ type, data, url })
 	if (url) {
-		console.log(fileExt(url))
-		//response = await fetch(url)
-		//console.log(await response.json())
+		const ext = fileExt(url)
+		type = ext ? ext : type
+		console.log(type)
+		//const result = getData(url)
+		//console.log(result)
 	}
-	if (file) type = fileExt(file)
 	// сериализуем данные
 	if (type == 'json') data = JSON.stringify(data)
 	const entries = Object.entries(prefixList).filter(([prefix, types]) => types.includes(type))[0]
@@ -30,7 +32,7 @@ export let createBlob = async (opts = blobOpts) => {
 	console.log(entries)
 	console.log(prefix)
 	type = `${prefix}/${type}`
-	console.log({ type, data, url, file })
+	console.log({ type, data, url })
 	// создаем файл
 	const blob = new Blob([data], { type })
 	// проверяем

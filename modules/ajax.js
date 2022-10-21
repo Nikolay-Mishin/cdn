@@ -1,6 +1,8 @@
 import { log } from './dom.js'
 import { headers } from './http.js'
+import { jsonParse } from './json.js'
 import { tryCatch } from './tryCatch.js'
+import { isJson } from './type.js'
 
 export const getData = async (url, _data = '', method = 'GET', toJson = true, _headers = {}, mode = null) => {
 	const file = await ajax(url, _data, method, toJson, _headers, mode)
@@ -50,5 +52,8 @@ export async function parseResponse(response) {
 	const contentType = headers.get('content-type') || '' // 'application/json'
 	console.log(contentType)
 	const parse = async (type = 'json') => await response[type]()
-	return await tryCatch(async () => await parse(), async () => await parse('text'))
+	//return contentType == 'application/json' ? await parse() : await parse('text')
+	const result = await parse('text')
+	const json = jsonParse(result)
+	return json || result
 }
