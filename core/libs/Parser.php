@@ -2,9 +2,21 @@
 
 class Parser {
 
-    private static $user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36";
+	private static string $url = "";
 
-    private static $error_codes = [
+    private static string $user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36";
+
+    private static int $timeout = 5;
+    private static int $connecttimeout = 5;
+    private static bool $head = false;
+
+    private static array $cookie = array("file" => false, "session" => false);
+    private static array $proxy = array("ip" => false, "port" => false, "type" => false);
+
+    private static array|bool $headers = false;
+    private static array|bool $post = false;
+
+    private static array $error_codes = [
         "CURLE_UNSUPPORTED_PROTOCOL",
         "CURLE_FAILED_INIT",
          // Тут более 60 элементов, в архиве вы найдете весь список
@@ -29,23 +41,24 @@ class Parser {
     public static function getPage($params = []) {
         if ($params) {
             if (!empty($params["url"])) {
-                $url = $params["url"];
+                self::$url = $params["url"];
 
                 $useragent      = !empty($params["useragent"]) ? $params["useragent"] : self::$user_agent;
-                $timeout        = !empty($params["timeout"]) ? $params["timeout"] : 5;
-                $connecttimeout = !empty($params["connecttimeout"]) ? $params["connecttimeout"] : 5;
-                $head           = !empty($params["head"]) ? $params["head"] : false;
 
-                $cookie_file    = !empty($params["cookie"]["file"]) ? $params["cookie"]["file"] : false;
-                $cookie_session = !empty($params["cookie"]["session"]) ? $params["cookie"]["session"] : false;
+                $timeout        = !empty($params["timeout"]) ? $params["timeout"] : self::$timeout;
+                $connecttimeout = !empty($params["connecttimeout"]) ? $params["connecttimeout"] : self::$connecttimeout;
+                $head           = !empty($params["head"]) ? $params["head"] : self::$head;
 
-                $proxy_ip   = !empty($params["proxy"]["ip"]) ? $params["proxy"]["ip"] : false;
-                $proxy_port = !empty($params["proxy"]["port"]) ? $params["proxy"]["port"] : false;
-                $proxy_type = !empty($params["proxy"]["type"]) ? $params["proxy"]["type"] : false;
+                $cookie_file    = !empty($params["cookie"]["file"]) ? $params["cookie"]["file"] : self::$cookie["file"];
+                $cookie_session = !empty($params["cookie"]["session"]) ? $params["cookie"]["session"] : self::$cookie["session"];
 
-                $headers = !empty($params["headers"]) ? $params["headers"] : false;
+                $proxy_ip       = !empty($params["proxy"]["ip"]) ? $params["proxy"]["ip"] : self::$proxy["ip"];
+                $proxy_port     = !empty($params["proxy"]["port"]) ? $params["proxy"]["port"] : self::$proxy["port"];
+                $proxy_type     = !empty($params["proxy"]["type"]) ? $params["proxy"]["type"] : self::$proxy["type"];
 
-                $post = !empty($params["post"]) ? $params["post"] : false;
+                $headers        = !empty($params["headers"]) ? $params["headers"] : self::$headers;
+
+                $post           = !empty($params["post"]) ? $params["post"] : self::$post;
 
                 // будет очищать файл с куками при запросе
                 if ($cookie_file) {
@@ -54,7 +67,7 @@ class Parser {
 
                 $ch = curl_init();
 
-                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_URL, self::$url);
                 curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -72,7 +85,7 @@ class Parser {
                 }
 
                 // Для работы со ссылками с SSL сертификатом
-                if (strpos($url, "https") !== false) {
+                if (strpos(self::$url, "https") !== false) {
                     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true);
                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
                 }
