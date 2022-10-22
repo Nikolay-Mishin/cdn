@@ -1,7 +1,7 @@
 import { config } from '../config/config.js'
 import { getData as ajaxGetData } from '../modules/ajax.js'
 import { IIFE } from '../modules/IIFE.js'
-import { log, B, addEvent, get, getById } from '../modules/dom.js'
+import { log, B, addEvent, get, getById, createEl } from '../modules/dom.js'
 import { ready } from '../modules/ready.js'
 import { createJson } from '../modules/createJson.js'
 import { getData, setData } from '../modules/data.js'
@@ -55,9 +55,10 @@ repoList.forEach(async (repo, i) => {
 	if (repoList.length == ++i) console.log(result)
 })
 
-const testParser = await ajaxGetData(saveFilePath, { url: 'http://yandex.ru/', action: 'getPage' })
+const testParser = await ajaxGetData(saveFilePath, { url: 'https://ya.ru/', action: 'getPage' })
 const testParser2 = await ajaxGetData(saveFilePath, { url: 'https://gitlab.com/qastart/web1-group/frontend/-/issues/89', action: 'getPage' })
-//getById('testParser').innerHTML = testParser.html.data.content
+const { content } = testParser.html.data
+getById('testParser').innerHTML = content
 //getById('testParser2').innerHTML = testParser2.html.data.content
 
 setState('index.html', { id: 'historyContent' })
@@ -69,3 +70,9 @@ const ext = fileExt(url)
 //createBlob({ url })
 
 console.log(ext)
+
+const div = createEl('div')
+div.innerHTML = content
+
+console.log(div)
+console.log(div.querySelector('title'))
