@@ -209,12 +209,9 @@ export const getSuites = async () => {
 			nextTc()
 		}
 
-		const observerTc = observeDOM(tcContentWrap)
-
-		observerTc.event('childList', tcClick)
+		const observerTc = observeDOM(tcContentWrap).event('childList', tcClick)
 
 		console.log(observerTc)
-
 		console.log(data)
 	}
 
