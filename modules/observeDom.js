@@ -46,40 +46,40 @@ export const observeDOM = (obj, opts = configObserver) => {
 			const { events } = observer
 			const { childList, attributes, characterData, cb, changed } = events
 
-			console.log(events)
+			//console.log(events)
 
 			let addedNodes = [], removedNodes = []
 
 			mutations.forEach(m => {
-				console.log(m)
+				//console.log(m)
 
 				push(addedNodes, m.addedNodes)
 				push(removedNodes, m.removedNodes)
 
 				if (m.type == 'childList') {
-					console.log(`A child node has been ${m.addedNodes.length ? 'added' : 'removed'}.`)
+					//console.log(`A child node has been ${m.addedNodes.length ? 'added' : 'removed'}.`)
 					childList(m, addedNodes, removedNodes)
 				}
 				else if (m.type == 'attributes') {
-					console.log('The ' + m.attributeName + ' attribute was modified.')
+					//console.log('The ' + m.attributeName + ' attribute was modified.')
 					attributes(m)
 				}
 				else if (m.type == 'characterData') {
-					console.log('The characterData was modified.')
+					//console.log('The characterData was modified.')
 					characterData(m, addedNodes, removedNodes)
 				}
 
 				cb(m, addedNodes, removedNodes)
 			})
 
-			console.log(observer)
+			//console.log(observer)
 
-			console.log(mutations)
+			//console.log(mutations)
 
-			console.log('Added:')
-			console.log(addedNodes)
-			console.log('Removed:')
-			console.log(removedNodes)
+			//console.log('Added:')
+			//console.log(addedNodes)
+			//console.log('Removed:')
+			//console.log(removedNodes)
 
 			changed(mutations, addedNodes, removedNodes)
 		}

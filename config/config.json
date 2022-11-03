@@ -22,6 +22,10 @@
 						"sa": "sharovatov_artem.json",
 						"web": "WEB_testing_1.json"
 					}
+				},
+				"testit": {
+					"root": "testit",
+					"tableFile": "table.json"
 				}
 			}
 		}

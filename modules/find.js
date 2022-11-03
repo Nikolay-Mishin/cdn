@@ -11,7 +11,3 @@ export const findDuplicates = (arr) => {
 	}
 	return results;
 }
-
-const columnList = [...document.getElementsByClassName('fl-detailed_table_sidebar-column')].map((item) => item.innerText)
-
-console.log(findDuplicates(columnList))

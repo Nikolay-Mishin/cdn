@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Private
+data/testit
+
 # User files
 cdn-proj-97edd04c5e66.json
 OAuth.json
