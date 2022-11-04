@@ -3,7 +3,6 @@ import { ajax, getData as $getData } from '../../modules/ajax.js'
 import { push } from '../../modules/array.js'
 import { get, getByClass } from '../../modules/dom.js'
 import { observeDOM } from '../../modules/observeDOM.js'
-import { descriptor } from '../../modules/prototype.js'
 
 console.log(descriptor)
 
@@ -36,7 +35,7 @@ export const getData = async () => {
 export const getInvalidData = async () => {
 	const { data } = await getData(fileData)
 	console.log(data)
-	const invalidData = data.filter((v) => v.keys().length < 6)
+	const invalidData = data.filter((v) => Object.keys(v).length < 6)
 	console.log(invalidData)
 }
 
