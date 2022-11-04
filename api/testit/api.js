@@ -3,8 +3,9 @@ import { ajax, getData as $getData } from '../../modules/ajax.js'
 import { push } from '../../modules/array.js'
 import { get, getByClass } from '../../modules/dom.js'
 import { observeDOM } from '../../modules/observeDOM.js'
+//import { descriptor } from '../../modules/prototype.js'
 
-console.log(descriptor)
+//console.log(descriptor)
 
 //await import('https://cdn/api/testit/api.js')
 
