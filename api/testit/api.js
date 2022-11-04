@@ -10,11 +10,13 @@ import { observeDOM } from '../../modules/observeDOM.js'
 //await import('https://cdn/api/testit/api.js')
 
 const { root } = config.path.data
-const { root: testit, tableFile } = config.path.data.api.testit
+const { root: testit, treeFile, tableFile } = config.path.data.api.testit
 const { root: rootServer, saveFile } = config.path.server
 const saveFilePath = `${rootServer}/${saveFile}`
 const file = `${root}/${testit}/${tableFile}`
 const fileData = `https://cdn/${file}`
+const fileTree = `${root}/${testit}/${tableFile}`
+const fileTreeData = `https://cdn/${file}`
 
 console.log(file)
 console.log(fileData)

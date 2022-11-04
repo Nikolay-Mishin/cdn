@@ -25,6 +25,7 @@
 				},
 				"testit": {
 					"root": "testit",
+					"treeeFile": "tree.json",
 					"tableFile": "table.json"
 				}
 			}
