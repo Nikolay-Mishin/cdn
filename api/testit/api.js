@@ -1,8 +1,11 @@
 import { config } from '../../config/config.js'
-import { ajax } from '../../modules/ajax.js'
+import { ajax, getData as $getData } from '../../modules/ajax.js'
 import { push } from '../../modules/array.js'
 import { get, getByClass } from '../../modules/dom.js'
 import { observeDOM } from '../../modules/observeDOM.js'
+import { descriptor } from '../../modules/prototype.js'
+
+console.log(descriptor)
 
 //await import('https://cdn/api/testit/api.js')
 
@@ -11,8 +14,10 @@ const { root: testit, tableFile } = config.path.data.api.testit
 const { root: rootServer, saveFile } = config.path.server
 const saveFilePath = `${rootServer}/${saveFile}`
 const file = `${root}/${testit}/${tableFile}`
+const fileData = `https://cdn/${file}`
 
 console.log(file)
+console.log(fileData)
 
 const treeQuery = '.list-wrapper'
 const titleClass = 'list-item__title'
@@ -21,6 +26,19 @@ const viewportQuery = '.ag-body-viewport'
 const cellClass = 'ag-cell-value'
 const rowClass = 'ag-row'
 const catClass = 'ag-full-width-row'
+
+//(await import('https://cdn/api/testit/api.js')).getData()
+export const getData = async () => {
+	return await $getData(fileData)
+}
+
+//(await import('https://cdn/api/testit/api.js')).getInvalidData()
+export const getInvalidData = async () => {
+	const { data } = await getData(fileData)
+	console.log(data)
+	const invalidData = data.filter((v) => v.keys().length < 6)
+	console.log(invalidData)
+}
 
 //(await import('https://cdn/api/testit/api.js')).init()
 export const init = async () => {

@@ -90,21 +90,17 @@ export const observeDOM = (obj, opts = configObserver) => {
 		observer.observe(obj, Object.assign(configObserver, opts))
 
 		setProperty(observer, 'events', {
-			value: {
-				changed: () => console.log('Observer event: changed'),
-				cb: () => { 'Observer: iterate' },
-				childList: () => { },
-				attributes: () => { },
-				characterData: () => { }
-			}
+			changed: () => console.log('Observer event: changed'),
+			cb: () => { 'Observer: iterate' },
+			childList: () => { },
+			attributes: () => { },
+			characterData: () => { }
 		})
 
-		setProperty(observer, 'event', {
-			value: (ev, cb = () => { }) => {
-				if (observer.events.hasOwnProperty(ev)) observer.events[ev] = cb
-				console.log(observer)
-				return observer
-			}
+		setProperty(observer, 'event', (ev, cb = () => { }) => {
+			if (observer.events.hasOwnProperty(ev)) observer.events[ev] = cb
+			console.log(observer)
+			return observer
 		})
 
 		return observer

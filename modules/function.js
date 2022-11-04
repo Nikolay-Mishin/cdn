@@ -6,3 +6,5 @@ export function callFuncByName(funcName, context = window, ...args) {
     })
     return context[func].apply(context, args)
 }
+
+export const funcName = func => func.name.replace('bound ', '').trim()
