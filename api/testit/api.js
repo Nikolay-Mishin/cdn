@@ -106,7 +106,7 @@ export const saveTreeData = async () => {
 	console.log(count)
 	console.log(data)
 
-	//await save(fileTreeCat, data)
+	await save(fileTreeCat, data)
 }
 
 //(await import('https://cdn/api/testit/api.js')).getInvalidData()
