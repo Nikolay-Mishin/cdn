@@ -31,6 +31,8 @@ console.log(fileTableData)
 console.log(fileCatData)
 console.log(fileTCData)
 
+const tableSchema = { id: '', title: '', priority: '', status: '', date: '', author: '', tag: '', catId: 0, cat: '' }
+
 const treeQuery = '.list-wrapper'
 const titleClass = 'list-item__title'
 const titleWrapClassName = 'section-tree__row ng-star-inserted'
@@ -67,8 +69,10 @@ export const getInvalidData = async (type = 'table') => {
 	const { data } = await getData(type)
 	console.log(data)
 	if (type !== 'table') return
-	const invalidData = data.filter((v) => Object.keys(v).length < 6)
+	const invalidData = data.filter((v) => Object.keys(v).length < Object.keys(tableSchema).length)
 	console.log(invalidData)
+	console.log(fileTable.replace(`${type}.`, `${type}-invalid.`))
+	await save(fileTable.replace(`${type}.`, `${type}-invalid.`), invalidData)
 }
 
 //(await import('https://cdn/api/testit/api.js')).saveTC()
@@ -126,7 +130,6 @@ export const saveTable = async () => {
 	const catList = []
 	const nodeList = [...getByClass(cellClass)].filter((node) => node.innerText.length)
 	const itemList = setTitles(nodeList)
-	const tableSchema = { id: '', title: '', priority: '', status: '', date: '', author: '', tag: '', catId: 0, cat: '' }
 
 	//console.log(viewport)
 	//console.log(nodeList)
