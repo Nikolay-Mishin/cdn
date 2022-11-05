@@ -100,11 +100,13 @@ export const saveTreeData = async () => {
 		return obj
 	})
 
+	data.count = count
+
 	console.log(countTable)
 	console.log(count)
 	console.log(data)
 
-	//await save(data, invalidData)
+	//await save(fileTreeCat, data)
 }
 
 //(await import('https://cdn/api/testit/api.js')).getInvalidData()
