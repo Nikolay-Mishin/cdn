@@ -90,6 +90,14 @@ export const getTCData = async (id) => {
 	getData('TC', id)
 }
 
+//(await import('https://cdn/api/testit/api.js')).editFields(['tag', [1]], ['type', '<img src="../img/icon/test_cases.png" alt="note" style="height:18px; width: 16px;"><img src="../img/icon/no-autotests.png" alt="note" style="height:18px; width: 16px;">'])
+export const editFields = async (...fields) => {
+	const data = await getData()
+	data.forEach((item) => fields.forEach(([k, v]) => item[k] = v))
+	console.log(data)
+	await save(fileTable, data)
+}
+
 //(await import('https://cdn/api/testit/api.js')).saveInvalidData()
 export const saveInvalidData = async () => {
 	const invalidData = await getInvalidData()
@@ -119,14 +127,6 @@ export const saveTreeData = async () => {
 	console.log(data)
 
 	await save(fileTreeCat, data)
-}
-
-//(await import('https://cdn/api/testit/api.js')).editFields(['tag', [1]], ['type', '<img src="../img/icon/test_cases.png" alt="note" style="height:18px; width: 16px;"><img src="../img/icon/no-autotests.png" alt="note" style="height:18px; width: 16px;">'])
-export const editFields = async (...fields) => {
-	const data = await getData()
-	data.forEach((item) => fields.forEach(([k, v]) => item[k] = v))
-	console.log(data)
-	await save(fileTable, data)
 }
 
 //(await import('https://cdn/api/testit/api.js')).saveTC()
