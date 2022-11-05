@@ -28,7 +28,7 @@
 					"root": "testit",
 					"treeFile": "tree.json",
 					"tableFile": "table.json",
-					"tcFile": "tc.json"
+					"tcFile": "tc/tc.json"
 				}
 			}
 		}

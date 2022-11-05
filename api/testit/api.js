@@ -1,7 +1,7 @@
 import { config } from '../../config/config.js'
 import { ajax, getData as $getData } from '../../modules/ajax.js'
 import { push } from '../../modules/array.js'
-import { get, getByClass } from '../../modules/dom.js'
+import { addEvent, get, getByClass, getById } from '../../modules/dom.js'
 import { observeDOM } from '../../modules/observeDOM.js'
 import { capitalizeFirstLetter } from '../../modules/str.js'
 //import { descriptor } from '../../modules/prototype.js'
@@ -34,6 +34,23 @@ const viewportQuery = '.ag-body-viewport'
 const cellClass = 'ag-cell-value'
 const rowClass = 'ag-row'
 const catClass = 'ag-full-width-row'
+const modalWrapId = 'overlay-container'
+const modalQuery = '.modal-content'
+
+const viewport = get(viewportQuery)
+const modalWrap = getById(modalWrapId)
+
+console.log(viewport)
+console.log(modalWrap)
+
+const getTitles = (list) => list.forEach((item) => console.log(item))
+const setTitles = (list) => [...list].map((item) => item.innerText)
+const getTable = (schema, list) => list.map((item) => {
+	const obj = Object.fromEntries(Object.entries(schema).map(([k, v], i) => [k, item[i]]))
+	return obj
+})
+const getModal = () => get(modalQuery, modalWrap)
+const save = async (file, data) => await ajax(saveFilePath, { file, data })
 
 //(await import('https://cdn/api/testit/api.js')).getData()
 export const getData = async (type = 'table') => {
@@ -49,17 +66,30 @@ export const getInvalidData = async (type = 'table') => {
 	console.log(invalidData)
 }
 
-const getTitles = (list) => list.forEach((item) => console.log(item))
-const setTitles = (list) => [...list].map((item) => item.innerText)
-const getTable = (schema, list) => list.map((item) => {
-	const obj = Object.fromEntries(Object.entries(schema).map(([k, v], i) => [k, item[i]]))
-	return obj
-})
-const save = async (file, data) => await ajax(saveFilePath, { file, data })
-
 //(await import('https://cdn/api/testit/api.js')).saveTC()
 export const saveTC = async () => {
-	await save(fileTC, data)
+	let changed = false
+	observeDOM(modalWrap).event('childList', (m, addedNodes) => {
+		//console.log(m)
+		changed = false
+		if (addedNodes.length && getModal() && m.target.classList.contains('ellipsis')) {
+			//console.log(addedNodes)
+			//console.log(getModal())
+			//console.log(m.target)
+			changed = true
+		}
+	}).event('changed', async (mutations, addedNodes) => {
+		if (changed) {
+			//console.log(mutations)
+			//console.log(addedNodes)
+			changed = false
+			const modal = getModal()
+			const id = get('.title', modal).innerText.replace('#', '')
+			//console.log(id)
+			//console.log(`${fileTC.replace('tc.', `tc-${id}.`)}`)
+			await save(`${fileTC.replace('tc.', `tc-${id}.`)}`, modal.outerHTML)
+		}
+	})
 }
 
 //(await import('https://cdn/api/testit/api.js')).saveTree()
@@ -88,7 +118,6 @@ export const saveTree = async () => {
 
 //(await import('https://cdn/api/testit/api.js')).saveTable()
 export const saveTable = async () => {
-	const viewport = get(viewportQuery)
 	const itemList = setTitles(getByClass(cellClass)).filter((node) => node.length)
 	const tableSchema = { id: '', title: '', priority: '', status: '', date: '', author: '' }
 
@@ -112,7 +141,7 @@ export const saveTable = async () => {
 	observeDOM(viewport).event('changed', async (mutations, addedNodes) => {
 		//console.log(mutations)
 		if (addedNodes.length) {
-			const isCat = (node) => node.classList.contains(catClass)
+			const isCat = (node) => node.classList?.contains(catClass)
 			const verify = (node) => node.classList.contains(rowClass) && node.innerText && !isCat(node)
 			const cat = addedNodes.filter((node) => isCat(node)).shift() || ''
 			const filtered = addedNodes.filter((node) => verify(node))
