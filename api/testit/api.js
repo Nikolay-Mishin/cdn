@@ -12,7 +12,7 @@ import { capitalizeFirstLetter } from '../../modules/str.js'
 
 const { host_local } = config
 const { root } = config.path.data
-const { root: testit, treeFile, tableFile, catFile, tcFile } = config.path.data.api.testit
+const { root: testit, treeFile, tableFile, catFile, tableInvalidFile, treeCatFile, treeCatInvalidFile, tcFile } = config.path.data.api.testit
 const { root: rootServer, saveFile } = config.path.server
 const saveFilePath = `${rootServer}/${saveFile}`
 
@@ -22,6 +22,10 @@ const fileTable = `${root}/${testit}/${tableFile}`
 const fileTableData = `${host_local}/${fileTable}`
 const fileCat = `${root}/${testit}/${catFile}`
 const fileCatData = `${host_local}/${fileCat}`
+const fileTableInvalid = `${root}/${testit}/${tableInvalidFile}`
+const fileTableInvalidData = `${host_local}/${fileTableInvalid}`
+const fileTreeCat = `${root}/${testit}/${treeCatFile}`
+const fileTreeCatData = `${host_local}/${fileTreeCat}`
 
 const fileTC = `${root}/${testit}/${tcFile}`
 const fileTCData = `${host_local}/${fileTC}`
@@ -29,6 +33,9 @@ const fileTCData = `${host_local}/${fileTC}`
 console.log(fileTreeData)
 console.log(fileTableData)
 console.log(fileCatData)
+console.log(fileTableInvalidData)
+console.log(fileTreeCatData)
+
 console.log(fileTCData)
 
 const tableSchema = { id: '', title: '', priority: '', status: '', date: '', author: '', tag: '', catId: 0, cat: '' }
@@ -57,22 +64,61 @@ const getTable = (schema, list) => list.map((item) => {
 	return obj
 })
 const getModal = () => get(modalQuery, modalWrap)
+const getPostfix = (path, id, replace = '.json') => path.replace(replace, `-${id + replace}`)
 const save = async (file, data) => await ajax(saveFilePath, { file, data })
 
 //(await import('https://cdn/api/testit/api.js')).getData()
-export const getData = async (type = 'table') => {
-	return await $getData(eval(`file${capitalizeFirstLetter(type)}Data`))
+export const getData = async (type = 'table', postfix = '') => {
+	let path = eval(`file${capitalizeFirstLetter(type)}Data`)
+	path = postfix ? getPostfix(path, postfix) : path
+	console.log(path)
+	const { data } = await $getData(path)
+	console.log(data)
+	return data
+}
+
+//(await import('https://cdn/api/testit/api.js')).getTCData(1940)
+export const getTCData = async (id) => {
+	getData('TC', id)
+}
+
+//(await import('https://cdn/api/testit/api.js')).saveTreeData()
+export const saveTreeData = async () => {
+	const table = await getData()
+	const catList = await getData('cat')
+	const countTable = table.length
+	let count = 0
+
+	const data = catList.map((_cat) => {
+		const obj = {
+			cat: _cat,
+			childList: table.filter(({ cat }) => cat == _cat)
+		}
+		const countChild = obj.childList.length
+		count += countChild
+		obj.count = countChild
+		return obj
+	})
+
+	console.log(countTable)
+	console.log(count)
+	console.log(data)
+
+	//await save(data, invalidData)
 }
 
 //(await import('https://cdn/api/testit/api.js')).getInvalidData()
-export const getInvalidData = async (type = 'table') => {
-	const { data } = await getData(type)
-	console.log(data)
-	if (type !== 'table') return
+export const getInvalidData = async () => {
+	const data = await getData()
 	const invalidData = data.filter((v) => Object.keys(v).length < Object.keys(tableSchema).length)
 	console.log(invalidData)
-	console.log(fileTable.replace(`${type}.`, `${type}-invalid.`))
-	await save(fileTable.replace(`${type}.`, `${type}-invalid.`), invalidData)
+	return invalidData
+}
+
+//(await import('https://cdn/api/testit/api.js')).saveInvalidData()
+export const saveInvalidData = async () => {
+	const invalidData = await getInvalidData()
+	await save(fileTableInvalid, invalidData)
 }
 
 //(await import('https://cdn/api/testit/api.js')).saveTC()
@@ -95,8 +141,8 @@ export const saveTC = async () => {
 			const modal = getModal()
 			const id = get('.title', modal).innerText.replace('#', '')
 			//console.log(id)
-			//console.log(`${fileTC.replace('tc.', `tc-${id}.`)}`)
-			await save(`${fileTC.replace('tc.', `tc-${id}.`)}`, modal.outerHTML)
+			//console.log(getPostfix(fileTC, id))
+			await save(getPostfix(fileTC, id), modal.outerHTML)
 		}
 	})
 }
