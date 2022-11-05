@@ -12,7 +12,7 @@ import { capitalizeFirstLetter } from '../../modules/str.js'
 
 const { host_local } = config
 const { root } = config.path.data
-const { root: testit, treeFile, tableFile, tcFile } = config.path.data.api.testit
+const { root: testit, treeFile, tableFile, catFile, tcFile } = config.path.data.api.testit
 const { root: rootServer, saveFile } = config.path.server
 const saveFilePath = `${rootServer}/${saveFile}`
 
@@ -20,11 +20,15 @@ const fileTree = `${root}/${testit}/${treeFile}`
 const fileTreeData = `${host_local}/${fileTree}`
 const fileTable = `${root}/${testit}/${tableFile}`
 const fileTableData = `${host_local}/${fileTable}`
+const fileCat = `${root}/${testit}/${catFile}`
+const fileCatData = `${host_local}/${fileCat}`
+
 const fileTC = `${root}/${testit}/${tcFile}`
 const fileTCData = `${host_local}/${fileTC}`
 
 console.log(fileTreeData)
 console.log(fileTableData)
+console.log(fileCatData)
 console.log(fileTCData)
 
 const treeQuery = '.list-wrapper'
@@ -34,6 +38,7 @@ const viewportQuery = '.ag-body-viewport'
 const cellClass = 'ag-cell-value'
 const rowClass = 'ag-row'
 const catClass = 'ag-full-width-row'
+const catQuery = '.section-data__name'
 const modalWrapId = 'overlay-container'
 const modalQuery = '.modal-content'
 
@@ -118,36 +123,87 @@ export const saveTree = async () => {
 
 //(await import('https://cdn/api/testit/api.js')).saveTable()
 export const saveTable = async () => {
-	const itemList = setTitles(getByClass(cellClass)).filter((node) => node.length)
-	const tableSchema = { id: '', title: '', priority: '', status: '', date: '', author: '' }
+	const catList = []
+	const nodeList = [...getByClass(cellClass)].filter((node) => node.innerText.length)
+	const itemList = setTitles(nodeList)
+	const tableSchema = { id: '', title: '', priority: '', status: '', date: '', author: '', tag: '', catId: 0, cat: '' }
 
 	//console.log(viewport)
+	//console.log(nodeList)
 	console.log(itemList)
 
 	let tempList = []
-	const tableContent = getTable(tableSchema, itemList.reduce((list, item) => {
+	const getCatName = (node) => get(catQuery, node)
+	let getCat = (id = 0, node = null) => getCatName(node || get(`[row-index="${id}"]`)).innerText
+	let setCat = (id = 0, cat = getCat(id)) => {
+		catList.push(cat)
+		//console.log(catList)
+		return cat
+	}
+	let cat = setCat()
+	const getCatId = () => catList.length - 1
+
+	const tableContent = getTable(tableSchema, itemList.reduce((list, item, i) => {
 		tempList.push(item)
 		if (tempList.length == 6) {
+			tempList.push('') // tag
+			const nodeRow = nodeList[i].closest(`.${rowClass}`)
+			let rowIndex = nodeRow.getAttribute('row-index')
+			const prevRowIndex = rowIndex - 1
+			const prevNode = get(`[row-index="${prevRowIndex}"]`)
+
+			//console.log(nodeList[i])
+			//console.log(nodeRow)
+			//console.log(rowIndex)
+			//console.log(prevRowIndex)
+			//console.log(prevNode)
+			//console.log(prevNode.classList.contains(catClass))
+			//console.log(getCatId())
+
+			if (prevNode.classList.contains(catClass) && prevRowIndex) cat = setCat(prevRowIndex)
+
+			//console.log(cat)
+			//console.log(getCatId())
+
+			tempList.push(getCatId())
+			tempList.push(cat)
+
 			list.push(tempList)
 			tempList = []
+
+			//console.log(list)
 		}
 		return list
 	}, []))
 
+	console.log(catList)
 	console.log(tableContent)
 
 	await save(fileTable, tableContent)
+	await save(fileCat, catList)
 
 	observeDOM(viewport).event('changed', async (mutations, addedNodes) => {
 		//console.log(mutations)
 		if (addedNodes.length) {
 			const isCat = (node) => node.classList?.contains(catClass)
 			const verify = (node) => node.classList.contains(rowClass) && node.innerText && !isCat(node)
-			const cat = addedNodes.filter((node) => isCat(node)).shift() || ''
+			const catNode = addedNodes.filter((node) => isCat(node)).shift() || null
 			const filtered = addedNodes.filter((node) => verify(node))
 				.map((node) => node.innerText).map((str) => str.split('\n'))
+
 			//console.log(addedNodes)
-			//console.log(cat)
+			//console.log(catNode)
+
+			if (catNode) cat = setCat(0, getCat(0, catNode))
+
+			filtered.map((item) => {
+				item.push('') // tag
+				item.push(getCatId())
+				item.push(cat)
+				return item
+			})
+
+			console.log(catList)
 			//console.log(filtered)
 
 			const tableContentChanged = getTable(tableSchema, filtered)
@@ -157,6 +213,7 @@ export const saveTable = async () => {
 			console.log(tableContent)
 
 			await save(fileTable, tableContent)
+			await save(fileCat, catList)
 		}
 	})
 }

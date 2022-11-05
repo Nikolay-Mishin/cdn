@@ -28,6 +28,7 @@
 					"root": "testit",
 					"treeFile": "tree.json",
 					"tableFile": "table.json",
+					"catFile": "cat.json",
 					"tcFile": "tc/tc.json"
 				}
 			}
