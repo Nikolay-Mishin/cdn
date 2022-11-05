@@ -38,7 +38,7 @@ class Server {
 	}
 
     private function setFlags(): int {
-        return $this->flags = self::$INVALID_UTF8 ? (JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE) : JSON_PRETTY_PRINT;
+        return $this->flags = self::$INVALID_UTF8 ? (JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE) : JSON_PRETTY_PRINT;
 	}
 
     private function parseRequest(): void {
