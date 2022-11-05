@@ -1,5 +1,6 @@
 {
 	"host": "https://cdn-4xd.pages.dev",
+	"host_local": "https://cdn",
 	"path": {
 		"server": {
 			"root": "https://cdn",
@@ -25,8 +26,9 @@
 				},
 				"testit": {
 					"root": "testit",
-					"treeeFile": "tree.json",
-					"tableFile": "table.json"
+					"treeFile": "tree.json",
+					"tableFile": "table.json",
+					"tcFile": "tc.json"
 				}
 			}
 		}

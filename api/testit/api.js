@@ -3,23 +3,29 @@ import { ajax, getData as $getData } from '../../modules/ajax.js'
 import { push } from '../../modules/array.js'
 import { get, getByClass } from '../../modules/dom.js'
 import { observeDOM } from '../../modules/observeDOM.js'
+import { capitalizeFirstLetter } from '../../modules/str.js'
 //import { descriptor } from '../../modules/prototype.js'
 
 //console.log(descriptor)
 
 //await import('https://cdn/api/testit/api.js')
 
+const { host_local } = config
 const { root } = config.path.data
-const { root: testit, treeFile, tableFile } = config.path.data.api.testit
+const { root: testit, treeFile, tableFile, tcFile } = config.path.data.api.testit
 const { root: rootServer, saveFile } = config.path.server
 const saveFilePath = `${rootServer}/${saveFile}`
-const file = `${root}/${testit}/${tableFile}`
-const fileData = `https://cdn/${file}`
-const fileTree = `${root}/${testit}/${tableFile}`
-const fileTreeData = `https://cdn/${file}`
 
-console.log(file)
-console.log(fileData)
+const fileTree = `${root}/${testit}/${treeFile}`
+const fileTreeData = `${host_local}/${fileTree}`
+const fileTable = `${root}/${testit}/${tableFile}`
+const fileTableData = `${host_local}/${fileTable}`
+const fileTC = `${root}/${testit}/${tcFile}`
+const fileTCData = `${host_local}/${fileTC}`
+
+console.log(fileTreeData)
+console.log(fileTableData)
+console.log(fileTCData)
 
 const treeQuery = '.list-wrapper'
 const titleClass = 'list-item__title'
@@ -30,40 +36,64 @@ const rowClass = 'ag-row'
 const catClass = 'ag-full-width-row'
 
 //(await import('https://cdn/api/testit/api.js')).getData()
-export const getData = async () => {
-	return await $getData(fileData)
+export const getData = async (type = 'table') => {
+	return await $getData(eval(`file${capitalizeFirstLetter(type)}Data`))
 }
 
 //(await import('https://cdn/api/testit/api.js')).getInvalidData()
-export const getInvalidData = async () => {
-	const { data } = await getData(fileData)
+export const getInvalidData = async (type = 'table') => {
+	const { data } = await getData(type)
 	console.log(data)
+	if (type !== 'table') return
 	const invalidData = data.filter((v) => Object.keys(v).length < 6)
 	console.log(invalidData)
 }
 
-//(await import('https://cdn/api/testit/api.js')).init()
-export const init = async () => {
-	const getTitles = (list) => list.forEach((item) => console.log(item))
-	const setTitles = (list) => [...list].map((item) => item.innerText)
-	const getTable = (schema, list) => list.map((item) => {
-		const obj = Object.fromEntries(Object.entries(schema).map(([k, v], i) => [k, item[i]]))
-		return obj
-	})
+const getTitles = (list) => list.forEach((item) => console.log(item))
+const setTitles = (list) => [...list].map((item) => item.innerText)
+const getTable = (schema, list) => list.map((item) => {
+	const obj = Object.fromEntries(Object.entries(schema).map(([k, v], i) => [k, item[i]]))
+	return obj
+})
+const save = async (file, data) => await ajax(saveFilePath, { file, data })
 
+//(await import('https://cdn/api/testit/api.js')).saveTC()
+export const saveTC = async () => {
+	await save(fileTC, data)
+}
+
+//(await import('https://cdn/api/testit/api.js')).saveTree()
+export const saveTree = async () => {
 	const tree = get(treeQuery)
-	const viewport = get(viewportQuery)
 	const titleList = setTitles(getByClass(titleClass))
+
+	//console.log(tree)
+	console.log(titleList)
+
+	await save(fileTree, titleList)
+
+	observeDOM(tree).event('changed', async (mutations, addedNodes) => {
+		const filtered = addedNodes.filter((node) => node.className == titleWrapClassName).map((node) => node.innerText)
+		//console.log(mutations)
+		if (addedNodes.length) console.log(addedNodes)
+		//console.log(filtered)
+
+		push(titleList, filtered)
+
+		console.log(titleList)
+
+		await save(fileTree, titleList)
+	})
+}
+
+//(await import('https://cdn/api/testit/api.js')).saveTable()
+export const saveTable = async () => {
+	const viewport = get(viewportQuery)
 	const itemList = setTitles(getByClass(cellClass)).filter((node) => node.length)
 	const tableSchema = { id: '', title: '', priority: '', status: '', date: '', author: '' }
 
-	//console.log(tree)
 	//console.log(viewport)
-	console.log(titleList)
 	console.log(itemList)
-
-	//getTitles(titleList)
-	//getTitles(itemList)
 
 	let tempList = []
 	const tableContent = getTable(tableSchema, itemList.reduce((list, item) => {
@@ -75,20 +105,11 @@ export const init = async () => {
 		return list
 	}, []))
 
-	//console.log(tableContent)
+	console.log(tableContent)
 
-	observeDOM(tree).event('changed', (mutations, addedNodes) => {
-		const filtered = addedNodes.filter((node) => node.className == titleWrapClassName).map((node) => node.innerText)
-		//console.log(mutations)
-		if (addedNodes.length) console.log(addedNodes)
-		//console.log(filtered)
+	await save(fileTable, tableContent)
 
-		push(titleList, filtered)
-
-		console.log(titleList)
-	})
-
-	observeDOM(viewport).event('changed', (mutations, addedNodes) => {
+	observeDOM(viewport).event('changed', async (mutations, addedNodes) => {
 		//console.log(mutations)
 		if (addedNodes.length) {
 			const isCat = (node) => node.classList.contains(catClass)
@@ -105,7 +126,8 @@ export const init = async () => {
 
 			//console.log(tableContentChanged)
 			console.log(tableContent)
-			ajax(saveFilePath, { file, data: tableContent })
+
+			await save(fileTable, tableContent)
 		}
 	})
 }
