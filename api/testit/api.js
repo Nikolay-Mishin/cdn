@@ -100,8 +100,6 @@ export const saveTreeData = async () => {
 		return obj
 	})
 
-	data.count = count
-
 	console.log(countTable)
 	console.log(count)
 	console.log(data)
