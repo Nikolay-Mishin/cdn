@@ -31,7 +31,8 @@
 					"catFile": "cat.json",
 					"tableInvalidFile": "table-invalid.json",
 					"treeCatFile": "tree-cat.json",
-					"tcFile": "tc/tc.json"
+					"tcFile": "tc/tc.json",
+					"imgTC": "tc/img"
 				}
 			}
 		}

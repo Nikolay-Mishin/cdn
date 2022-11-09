@@ -1,7 +1,10 @@
 import { config } from '../../config/config.js'
 import { ajax, getData as $getData } from '../../modules/ajax.js'
 import { push } from '../../modules/array.js'
-import { addEvent, get, getByClass, getById } from '../../modules/dom.js'
+import { addEvent, createEl, get, getAll, getByClass, getById } from '../../modules/dom.js'
+import { click } from '../../modules/events.js'
+import { fileExt, fileName } from '../../modules/FS.js'
+import { getImgData, imgToBlob } from '../../modules/img.js'
 import { observeDOM } from '../../modules/observeDOM.js'
 import { capitalizeFirstLetter } from '../../modules/str.js'
 //import { descriptor } from '../../modules/prototype.js'
@@ -10,9 +13,11 @@ import { capitalizeFirstLetter } from '../../modules/str.js'
 
 //await import('https://cdn/api/testit/api.js')
 
+const host = 'https://testit.infologistics.ru'
+
 const { host_local } = config
 const { root } = config.path.data
-const { root: testit, treeFile, tableFile, catFile, tableInvalidFile, treeCatFile, treeCatInvalidFile, tcFile } = config.path.data.api.testit
+const { root: testit, treeFile, tableFile, catFile, tableInvalidFile, treeCatFile, treeCatInvalidFile, tcFile, imgTC } = config.path.data.api.testit
 const { root: rootServer, saveFile } = config.path.server
 const saveFilePath = `${rootServer}/${saveFile}`
 
@@ -29,6 +34,7 @@ const fileTreeCatData = `${host_local}/${fileTreeCat}`
 
 const fileTC = `${root}/${testit}/${tcFile}`
 const fileTCData = `${host_local}/${fileTC}`
+const imgTCPath = `${root}/${testit}/${imgTC}`
 
 console.log(fileTreeData)
 console.log(fileTableData)
@@ -37,6 +43,7 @@ console.log(fileTableInvalidData)
 console.log(fileTreeCatData)
 
 console.log(fileTCData)
+console.log(imgTCPath)
 
 const tableSchema = { id: '', title: '', priority: '', status: '', date: '', author: '', tag: '', catId: 0, cat: '', type: '' }
 
@@ -50,6 +57,8 @@ const catClass = 'ag-full-width-row'
 const catQuery = '.section-data__name'
 const modalWrapId = 'overlay-container'
 const modalQuery = '.modal-content'
+const idQuery = '.title'
+const fileQuery = 'img'
 
 const viewport = get(viewportQuery)
 const modalWrap = getById(modalWrapId)
@@ -65,7 +74,7 @@ const getTable = (schema, list) => list.map((item) => {
 })
 const getModal = () => get(modalQuery, modalWrap)
 const getPostfix = (path, id, replace = '.json') => path.replace(replace, `-${id + replace}`)
-const save = async (file, data) => await ajax(saveFilePath, { file, data })
+const save = async (file, data, action) => await ajax(saveFilePath, { file, data, action })
 
 //(await import('https://cdn/api/testit/api.js')).getData()
 export const getData = async (type = 'table', postfix = '') => {
@@ -142,15 +151,41 @@ export const saveTC = async () => {
 			changed = true
 		}
 	}).event('changed', async (mutations, addedNodes) => {
+		console.log(changed)
 		if (changed) {
 			//console.log(mutations)
 			//console.log(addedNodes)
+
 			changed = false
+
+			const getImgPath = (id, i) => `${imgTCPath}/${id}/${i}.png`
+
 			const modal = getModal()
-			const id = get('.title', modal).innerText.replace('#', '')
-			//console.log(id)
-			//console.log(getPostfix(fileTC, id))
-			await save(getPostfix(fileTC, id), modal.outerHTML)
+			let html = modal.outerHTML
+			const id = get(idQuery, modal).innerText.replace('#', '')
+
+			console.log(modal)
+			console.log(id)
+			console.log(getPostfix(fileTC, id))
+
+			const files = [...getAll(fileQuery, modal)]
+
+			console.log(files)
+
+			files.forEach(async (img, i) => {
+				const { data } = getImgData(img)
+				const src = img.src.replace(host, '').split('?').shift()
+				console.log(getImgPath(id, i))
+				//console.log(src)
+				//console.log(typeof html)
+				//console.log(...html.matchAll(src))
+				html = html.replace(src, getImgPath(id, i))
+				await save(getImgPath(id, i), data, 'saveImg')
+			})
+
+			console.log(html)
+
+			await save(getPostfix(fileTC, id), html)
 		}
 	})
 }

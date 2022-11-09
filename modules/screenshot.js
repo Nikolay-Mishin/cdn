@@ -23,7 +23,7 @@ export const createScreenshot = async (canvas, type = 'png', save = true) => {
 export const appendScreenshot = async (target = B, type = 'png', save = true) => {
 	await html2canvas(target).then(async (canvas) => {
 		const { name, base64image } = await createScreenshot(canvas, type, save)
-		const img = imgToBlob((blob) => {
+		const { img } = imgToBlob(({ blob }) => {
 			console.log(blob)
 			// Generate file download
 			createLink(blob, `${name}.${type}`, type, '#screenshot', 'DOWNLOAD IMG')
