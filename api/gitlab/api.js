@@ -1,12 +1,13 @@
-import { createBlob } from '../../modules/blob.js'
 import { createLink } from '../../modules/link.js'
 import { B, get, getAll, getByClass } from '../../modules/dom.js'
 import { fileExt } from '../../modules/FS.js'
 import { getImgData } from '../../modules/img.js'
 
-//await import('https://cdn/api/gitlab/api.js')
+/**
+ * await import('https://cdn/api/gitlab/api.js')
+ * (await import('https://cdn/api/gitlab/api.js')).init()
+ */
 
-//(await import('https://cdn/api/gitlab/api.js')).init()
 export const init = async () => {
 	const author = getByClass('author')[0].innerHTML
 	const id = B.dataset.pageTypeId

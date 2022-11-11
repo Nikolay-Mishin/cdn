@@ -7,7 +7,11 @@ import { observeDOM } from '../../modules/observeDOM.js'
 import { interval } from '../../modules/time.js'
 import { getCountCases } from './modules/getCountCases.js'
 
-//await import('https://cdn/api/qaraTMS/api.js')
+/**
+ * await import('https://cdn/api/qaraTMS/api.js')
+ * (await import('https://cdn/api/qaraTMS/api.js')).init()
+ * (await import('https://cdn/api/qaraTMS/api.js')).getSuites()
+ */
 
 const repoClass = 'text-muted'
 
@@ -22,12 +26,10 @@ const file = `${root}/${qaraTMS}/${repo}.json`
 console.log(qaraTMS)
 console.log(file)
 
-//(await import('https://cdn/api/qaraTMS/api.js')).init()
 export const init = async () => {
 	await getSuites()
 }
 
-//(await import('https://cdn/api/qaraTMS/api.js')).getSuites()
 export const getSuites = async () => {
 	const data = {}
 

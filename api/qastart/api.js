@@ -5,7 +5,11 @@ import { concat } from '../../modules/array.js'
 import { getData } from '../../modules/ajax.js'
 import { trimExt } from '../../modules/FS.js'
 
-//await import('https://cdn/api/qastart/api.js')
+/**
+ * await import('https://cdn/api/qastart/api.js')
+ * (await import('https://cdn-4xd.pages.dev/api/qastart/api.js')).setForm()
+ * (await import('https://cdn-4xd.pages.dev/api/qastart/api.js')).getForm()
+ */
 
 const { host } = config
 const { root } = config.path.data
@@ -42,12 +46,10 @@ export const getRepo = async (repo) => {
 	return await getData(file)
 }
 
-//(await import('https://cdn-4xd.pages.dev/api/qastart/api.js')).setForm()
 export const setForm = () => {
 	init()
 }
 
-//(await import('https://cdn-4xd.pages.dev/api/qastart/api.js')).getForm()
 export const getForm = () => {
 	const formData = {}
 

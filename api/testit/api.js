@@ -1,17 +1,26 @@
 import { config } from '../../config/config.js'
 import { ajax, getData as $getData } from '../../modules/ajax.js'
 import { push } from '../../modules/array.js'
-import { addEvent, createEl, get, getAll, getByClass, getById } from '../../modules/dom.js'
-import { click } from '../../modules/events.js'
-import { fileExt, fileName } from '../../modules/FS.js'
-import { getImgData, imgToBlob } from '../../modules/img.js'
+import { get, getAll, getByClass, getById } from '../../modules/dom.js'
+import { getImgData } from '../../modules/img.js'
 import { observeDOM } from '../../modules/observeDOM.js'
 import { capitalizeFirstLetter } from '../../modules/str.js'
 //import { descriptor } from '../../modules/prototype.js'
 
-//console.log(descriptor)
+/**
+ * await import('https://cdn/api/testit/api.js')
+ * (await import('https://cdn/api/testit/api.js')).getData()
+ * (await import('https://cdn/api/testit/api.js')).getInvalidData()
+ * (await import('https://cdn/api/testit/api.js')).getTCData(1940)
+ * (await import('https://cdn/api/testit/api.js')).editFields(['tag', [1]], ['type', '<img src="../img/icon/test_cases.png" alt="note" style="height:18px; width: 16px;"><img src="../img/icon/no-autotests.png" alt="note" style="height:18px; width: 16px;">'])
+ * (await import('https://cdn/api/testit/api.js')).saveInvalidData()
+ * (await import('https://cdn/api/testit/api.js')).saveTreeData()
+ * (await import('https://cdn/api/testit/api.js')).saveTC()
+ * (await import('https://cdn/api/testit/api.js')).saveTree()
+ * (await import('https://cdn/api/testit/api.js')).saveTable()
+ */
 
-//await import('https://cdn/api/testit/api.js')
+//console.log(descriptor)
 
 const host = 'https://testit.infologistics.ru'
 
@@ -76,7 +85,6 @@ const getModal = () => get(modalQuery, modalWrap)
 const getPostfix = (path, id, replace = '.json') => path.replace(replace, `-${id + replace}`)
 const save = async (file, data, action) => await ajax(saveFilePath, { file, data, action })
 
-//(await import('https://cdn/api/testit/api.js')).getData()
 export const getData = async (type = 'table', postfix = '') => {
 	let path = eval(`file${capitalizeFirstLetter(type)}Data`)
 	path = postfix ? getPostfix(path, postfix) : path
@@ -86,7 +94,6 @@ export const getData = async (type = 'table', postfix = '') => {
 	return data
 }
 
-//(await import('https://cdn/api/testit/api.js')).getInvalidData()
 export const getInvalidData = async () => {
 	const data = await getData()
 	const invalidData = data.filter((v) => Object.keys(v).length < Object.keys(tableSchema).length)
@@ -94,12 +101,10 @@ export const getInvalidData = async () => {
 	return invalidData
 }
 
-//(await import('https://cdn/api/testit/api.js')).getTCData(1940)
 export const getTCData = async (id) => {
 	getData('TC', id)
 }
 
-//(await import('https://cdn/api/testit/api.js')).editFields(['tag', [1]], ['type', '<img src="../img/icon/test_cases.png" alt="note" style="height:18px; width: 16px;"><img src="../img/icon/no-autotests.png" alt="note" style="height:18px; width: 16px;">'])
 export const editFields = async (...fields) => {
 	const data = await getData()
 	data.forEach((item) => fields.forEach(([k, v]) => item[k] = v))
@@ -107,13 +112,11 @@ export const editFields = async (...fields) => {
 	await save(fileTable, data)
 }
 
-//(await import('https://cdn/api/testit/api.js')).saveInvalidData()
 export const saveInvalidData = async () => {
 	const invalidData = await getInvalidData()
 	await save(fileTableInvalid, invalidData)
 }
 
-//(await import('https://cdn/api/testit/api.js')).saveTreeData()
 export const saveTreeData = async () => {
 	const table = await getData()
 	const catList = await getData('cat')
@@ -138,7 +141,6 @@ export const saveTreeData = async () => {
 	await save(fileTreeCat, data)
 }
 
-//(await import('https://cdn/api/testit/api.js')).saveTC()
 export const saveTC = async () => {
 	let changed = false
 	observeDOM(modalWrap).event('childList', (m, addedNodes) => {
@@ -190,7 +192,7 @@ export const saveTC = async () => {
 	})
 }
 
-//(await import('https://cdn/api/testit/api.js')).saveTree()
+
 export const saveTree = async () => {
 	const tree = get(treeQuery)
 	const titleList = setTitles(getByClass(titleClass))
@@ -214,7 +216,7 @@ export const saveTree = async () => {
 	})
 }
 
-//(await import('https://cdn/api/testit/api.js')).saveTable()
+
 export const saveTable = async () => {
 	const catList = []
 	const nodeList = [...getByClass(cellClass)].filter((node) => node.innerText.length)
