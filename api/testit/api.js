@@ -56,6 +56,11 @@ console.log(imgTCPath)
 
 const tableSchema = { id: '', title: '', priority: '', status: '', date: '', author: '', tag: '', catId: 0, cat: '', type: '' }
 
+const fieldsForEdit = [
+	['tag', [1]],
+	['type', '<img src="../img/icon/test_cases.png" alt="note" style="height:18px; width: 16px;"><img src="../img/icon/no-autotests.png" alt="note" style="height:18px; width: 16px;">']
+]
+
 const treeQuery = '.list-wrapper'
 const titleClass = 'list-item__title'
 const titleWrapClassName = 'section-tree__row ng-star-inserted'
@@ -118,6 +123,7 @@ export const saveInvalidData = async () => {
 }
 
 export const saveTreeData = async () => {
+	editFields(...fieldsForEdit)
 	const table = await getData()
 	const catList = await getData('cat')
 	const countTable = table.length
