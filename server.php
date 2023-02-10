@@ -37,6 +37,42 @@ class Server {
 		$this->$action();
 	}
 
+    private function saveAction(): void {
+        $data = array("update" => $this->date, "data" => $this->data);
+        $json = json_encode($data, $this->flags);
+
+        $this->dirExist(dirname($this->file));
+        file_put_contents($this->file, $json);
+		exit(json_encode(array("file" => file_get_contents($this->file), "resp" => $this->resp), $this->flags));
+	}
+
+    private function saveImgAction(): void {
+        $this->dirExist(dirname($this->file));
+		$check_save = file_put_contents($this->file, base64_decode($this->data));
+        exit(json_encode($check_save ? array("img" => $this->file) : array("error" => "Ошибка в сохранении файла"), $this->flags));
+	}
+
+    private function getCommentsAction(): void {
+		$data = [];
+        $users = $this->getData($this->data->users);
+        $comments = $this->getData($this->data->comments);
+		//$data = array_map(fn($v): int => $v * 2, $data);
+		foreach ($comments as $comment) {
+            $comment->user = $users[--$comment->user];
+			if ($comment->parent_id) $data[--$comment->parent_id]->childList[] = $comment;
+			else $data[] = $comment;
+        }
+        exit(json_encode($data, $this->flags));
+	}
+
+    private function getPageAction(): void {
+        $args = $this->args ? $this->args : [
+		    "url" => $this->url
+	    ];
+		$html = Parser::getPage($args);
+        exit(json_encode(array("args" => $this->args, "url" => $this->url, "html" => $html, "resp" => $this->resp), $this->flags));
+	}
+
     private function setFlags(): int {
         return $this->flags = self::$INVALID_UTF8 ? (JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE) : JSON_PRETTY_PRINT;
 	}
@@ -74,32 +110,13 @@ class Server {
         return $this->resp = array("status" => $this->status, "error" => $this->error, "INVALID_UTF8" => self::$INVALID_UTF8,"flags" => $this->flags, "content" => $this->content);
 	}
 
-    private function saveAction(): void {
-        $data = array("update" => $this->date, "data" => $this->data);
-        $json = json_encode($data, $this->flags);
-
-        $this->dirExist(dirname($this->file));
-        file_put_contents($this->file, $json);
-		exit(json_encode(array("file" => file_get_contents($this->file), "resp" => $this->resp), $this->flags));
-	}
-
-    private function saveImgAction(): void {
-        $this->dirExist(dirname($this->file));
-		$check_save = file_put_contents($this->file, base64_decode($this->data));
-        exit(json_encode($check_save ? array("img" => $this->file) : array("error" => "Ошибка в сохранении файла"), $this->flags));
-	}
-
-    private function getPageAction(): void {
-        $args = $this->args ? $this->args : [
-		    "url" => $this->url
-	    ];
-		$html = Parser::getPage($args);
-        exit(json_encode(array("args" => $this->args, "url" => $this->url, "html" => $html, "resp" => $this->resp), $this->flags));
-	}
-
     private function dirExist($path, $create = true) {
         // Для создания вложенной структуры необходимо указать параметр $recursive в mkdir().
         return is_dir($path) || ($create && mkdir($path, 0777, true));
+	}
+
+    private function getData($file): object|array {
+        return json_decode(file_get_contents($file));
 	}
 
     private function testInvalidChar(): string {
