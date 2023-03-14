@@ -134,7 +134,6 @@ class Imap_parser {
 					'from' => $overview[0]->from,
 					'email' => $mail,
 					'date' => $overview[0]->date,
-					'structure' => $structure,
 					'message' => $this->toUtf8(trim($msg)),
 					'image' => $image
 				);

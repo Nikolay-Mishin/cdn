@@ -26,7 +26,7 @@ class Server {
     private ?Exception $e;
     private ?array $resp;
 
-    // {imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX
+    private ?array $imap_data;
     private bool $toUtf8 = false;
     private string $host = "{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX";
     private string $sort = "DESC"; // DESC or ASC
@@ -47,26 +47,44 @@ class Server {
 	}
 
     private function imapAction(): void {
-        // data
-        $data = array(
-	        // email account
-	        'email' => array(
-		        'hostname' => $this->host,
-		        'username' => $this->data->email,
-		        'password' => $this->data->password
+		exit(json_encode($this->getEmailsByImap(), $this->flags));
+    }
+
+    private function getCodeFromEmailAction(): void {
+        $inbox = $this->getLastEmailByImap();
+        preg_match_all("/<span>\d{4}<\/span>/", $inbox['message'], $matches, PREG_PATTERN_ORDER);
+        if (isset($matches[0][0])) preg_match_all("/\d{4}/", $matches[0][0], $matches, PREG_PATTERN_ORDER);
+        $code = $matches[0][0] ?? null;
+		exit(json_encode(array("code" => $code), $this->flags));
+    }
+
+    private function getLastEmailByImapAction(): void {
+		exit(json_encode($this->getLastEmailByImap(), $this->flags));
+    }
+
+    private function getLastEmailByImap(): array {
+        $this->limit = 1;
+		return $this->getEmailsByImap()['inbox'][0];
+    }
+
+    private function getEmailsByImap(): array {
+        // Imap data
+        $this->imap_data = array(
+            // email account
+            'email' => array(
+                'hostname' => $this->host,
+                'username' => $this->data->email,
+                'password' => $this->data->password
         ),
-	        // inbox pagination
-	        'pagination' => array(
-		        'sort' => $this->data->sort ?? $this->sort,
-		        'limit' => $this->data->limit ?? $this->limit,
-		        'offset' => $this->data->offset ?? $this->offset
-	        )
+            // inbox pagination
+            'pagination' => array(
+                'sort' => $this->data->sort ?? $this->sort,
+                'limit' => $this->data->limit ?? $this->limit,
+                'offset' => $this->data->offset ?? $this->offset
+            )
         );
-
         // create Imap_parser Object & get inbox Array
-        $result = (new Imap_parser($this->toUtf8))->inbox($data);
-
-		exit(json_encode(array("inbox" => $result, "resp" => $this->resp), $this->flags));
+        return (new Imap_parser($this->toUtf8))->inbox($this->imap_data);
     }
 
     private function saveAction(): void {
