@@ -53,8 +53,7 @@ class Server {
     private function getCodeFromEmailAction(): void {
         $inbox = $this->getLastEmailByImap();
         preg_match_all("/<span>\d{4}<\/span>/", $inbox['message'], $matches, PREG_PATTERN_ORDER);
-        if (isset($matches[0][0])) preg_match_all("/\d{4}/", $matches[0][0], $matches, PREG_PATTERN_ORDER);
-        $code = $matches[0][0] ?? null;
+        $code = (int) preg_replace('/\D/', '', $matches[0][0] ?? null);
 		exit(json_encode(array("code" => $code), $this->flags));
     }
 
