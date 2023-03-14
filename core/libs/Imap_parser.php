@@ -39,9 +39,14 @@
 
 class Imap_parser {
 
-	function inbox($data)
-	{
+	private bool $toUtf8 = false;
+	private ?int $encoding;
 
+	public function __construct(?bool $toUtf8) {
+        $this->toUtf8 = $toUtf8 ?? $this->toUtf8;
+	}
+
+	public function inbox($data, $toUtf8 = false) {
 		$result = array();
 
 		$imap = imap_open($data['email']['hostname'], $data['email']['username'], $data['email']['password']) or die ('Cannot connect to yourdomain.com: ' . imap_last_error());
@@ -53,7 +58,7 @@ class Imap_parser {
 
 			$read = imap_search($imap, 'ALL');
 
-			if ($data['pagination']['sort'] == 'DESC'){
+			if ($data['pagination']['sort'] == 'DESC') {
 				rsort($read);
 			}
 
@@ -68,7 +73,6 @@ class Imap_parser {
 			}
 
 			for ($i = $data['pagination']['offset']; $i < $stop; $i++) {
-
 				$overview   = imap_fetch_overview($imap, $read[$i], 0);
 				$message    = imap_body($imap, $read[$i], 0);
 				$header     = imap_headerinfo($imap, $read[$i], 0);
@@ -80,6 +84,18 @@ class Imap_parser {
 				$message = preg_replace('/Content\-ID\:/i', '', $message);
 
 				$msg = '';
+
+				$structure = imap_fetchstructure($imap, $read[$i]);
+				$encoding = $structure->encoding;
+
+                if (isset($structure->parts) && is_array($structure->parts) && isset($structure->parts[1])) {
+                    $part = $structure->parts[1];
+                    $structure = imap_fetchbody($imap, $read[$i], 2);
+					$this->encoding = $part->encoding;
+					$this->toUtf8($structure);
+                }
+
+				$this->encoding = $encoding;
 
 				if (preg_match('/Content-Type/', $message)) {
 					$message = strip_tags($message);
@@ -110,6 +126,7 @@ class Imap_parser {
 				$msg = preg_replace('/text\/(.*)\;/', '', $msg);
 				$msg = preg_replace('/charset\=(.*)\"/', '', $msg);
 				$msg = preg_replace('/Content\-Transfer\-Encoding\:(.*)/i', '', $msg);
+				$msg = trim($msg);
 
 				$result['inbox'][] = array(
 					'id' => $read[$i],
@@ -117,7 +134,8 @@ class Imap_parser {
 					'from' => $overview[0]->from,
 					'email' => $mail,
 					'date' => $overview[0]->date,
-					'message' => trim($msg),
+					'structure' => $structure,
+					'message' => $this->toUtf8(trim($msg)),
 					'image' => $image
 				);
 
@@ -138,4 +156,15 @@ class Imap_parser {
 
 		return $result;
 	}
+
+	private function toUtf8(string $data): string {
+        if ($this->encoding == 3) {
+            $data = imap_base64($data);
+        } else if($this->encoding == 1) {
+            $data = imap_8bit($data);
+        } else {
+            $data = imap_qprint($data);
+        }
+        return $this->toUtf8 ? utf8_decode(imap_utf8($data)) : $data;
+    }
 }

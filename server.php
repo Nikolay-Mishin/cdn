@@ -26,7 +26,9 @@ class Server {
     private ?Exception $e;
     private ?array $resp;
 
-    private string $host = "{mail.anu.com:143/notls}INBOX";
+    // {imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX
+    private bool $toUtf8 = false;
+    private string $host = "{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX";
     private string $sort = "DESC"; // DESC or ASC
     private int $limit = 10; // 10
     private int $offset = 0; // 0
@@ -45,29 +47,24 @@ class Server {
 	}
 
     private function imapAction(): void {
-        // create Imap_parser Object
-        $email = new Imap_parser();
-
-        $this->data->sort = $this->data->sort ?? $this->sort;
-
         // data
         $data = array(
 	        // email account
 	        'email' => array(
-		        'hostname' => "$this->host",
-		        'username' => "$this->data->email",
-		        'password' => "$this->data->password"
+		        'hostname' => $this->host,
+		        'username' => $this->data->email,
+		        'password' => $this->data->password
         ),
 	        // inbox pagination
 	        'pagination' => array(
-		        'sort' => $this->data->sort,
+		        'sort' => $this->data->sort ?? $this->sort,
 		        'limit' => $this->data->limit ?? $this->limit,
 		        'offset' => $this->data->offset ?? $this->offset
 	        )
         );
 
-        // get inbox. Array
-        $result = $email->inbox($data);
+        // create Imap_parser Object & get inbox Array
+        $result = (new Imap_parser($this->toUtf8))->inbox($data);
 
 		exit(json_encode(array("inbox" => $result, "resp" => $this->resp), $this->flags));
     }
@@ -145,7 +142,7 @@ class Server {
         return $this->resp = array("status" => $this->status, "error" => $this->error, "INVALID_UTF8" => self::$INVALID_UTF8,"flags" => $this->flags, "content" => $this->content);
 	}
 
-    private function dirExist($path, $create = true) {
+    private function dirExist(string $path, bool $create = true) {
         // Для создания вложенной структуры необходимо указать параметр $recursive в mkdir().
         return is_dir($path) || ($create && mkdir($path, 0777, true));
 	}
