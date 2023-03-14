@@ -1,5 +1,6 @@
 <?php
-require_once "core/libs/Parser.php";
+require_once "core/libs/Parser.php";
+
 require_once "core/libs/Imap_parser.php";
 
 class Server {
@@ -42,33 +43,33 @@ class Server {
 		$action = $this->action."Action";
 		$this->$action();
 	}
-    
+
     private function imapAction(): void {
-// create Imap_parser Object
-$email = new Imap_parser();
+        // create Imap_parser Object
+        $email = new Imap_parser();
 
-$this->data->sort = $this->data->sort ?? $this->sort;
+        $this->data->sort = $this->data->sort ?? $this->sort;
 
-// data
-$data = array(
-	// email account
-	'email' => array(
-		'hostname' => "$this->host",
-		'username' => "$this->data->email",
-		'password' => "$this->data->password"
-),
-	// inbox pagination
-	'pagination' => array(
-		'sort' => $this->data->sort,
-		'limit' => $this->data->limit ?? $this->limit,
-		'offset' => $this->data->offset ?? $this->offset
-	)
-);
+        // data
+        $data = array(
+	        // email account
+	        'email' => array(
+		        'hostname' => "$this->host",
+		        'username' => "$this->data->email",
+		        'password' => "$this->data->password"
+        ),
+	        // inbox pagination
+	        'pagination' => array(
+		        'sort' => $this->data->sort,
+		        'limit' => $this->data->limit ?? $this->limit,
+		        'offset' => $this->data->offset ?? $this->offset
+	        )
+        );
 
-// get inbox. Array
-$result = $email->inbox($data);
+        // get inbox. Array
+        $result = $email->inbox($data);
 
-		exit(json_encode(array("inbox" => $result), "resp" => $this->resp), $this->flags));
+		exit(json_encode(array("inbox" => $result, "resp" => $this->resp), $this->flags));
     }
 
     private function saveAction(): void {
